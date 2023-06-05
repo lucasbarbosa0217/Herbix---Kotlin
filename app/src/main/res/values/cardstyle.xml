@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="MyCardView" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay.MaterialCardView.Cut</item>
+    </style>
+
+
+    <style name="ShapeAppearanceOverlay.MaterialCardView.Cut" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">42dp</item>
+        <item name="cornerSizeTopLeft">42dp</item>
+        <item name="cornerSizeBottomRight">42dp</item>
+        <item name="cornerSizeBottomLeft">42dp</item>
+    </style>
+</resources>
