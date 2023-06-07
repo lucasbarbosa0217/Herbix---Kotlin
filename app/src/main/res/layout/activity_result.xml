@@ -57,7 +57,7 @@
             android:paddingBottom="48dp">
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/titleTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/quicksand_medium"
@@ -70,21 +70,24 @@
 
             <ImageView
                 android:id="@+id/imageView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="120dp"
                 android:layout_marginTop="24dp"
+                android:adjustViewBounds="true"
+                android:cropToPadding="true"
+                android:scaleType="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/titleTextView"
                 app:srcCompat="@drawable/iamgemexemplo" />
 
             <TextView
-                android:id="@+id/details"
+                android:id="@+id/descriptionTextView"
                 android:layout_width="0dp"
                 android:layout_height="120dp"
                 android:layout_marginTop="24dp"
                 android:autoText="false"
-                android:fontFamily="@font/quicksand"
+                android:fontFamily="@font/quicksand_medium"
                 android:text="Uma breve descrição do que é a doença e algumas formas de tratá-la. Acho que a gente pode inclusive gerar ela com uma requisição para a API do Chat GPT, se não for muito complexo"
                 android:textAlignment="center"
                 android:textColor="@color/white"
@@ -109,7 +112,7 @@
         android:paddingTop="10dp"
         android:paddingRight="55dp"
         android:paddingBottom="10dp"
-        android:text="UPLOAD DA IMAGEM"
+        android:text="INÍCIO"
         android:textColor="@android:color/black"
         android:textColorHighlight="@android:color/white"
         android:textColorLink="#FFFFFF"

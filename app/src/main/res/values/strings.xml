@@ -1,3 +1,33 @@
 <resources>
     <string name="app_name">Herbix</string>
+    <string name="acarorajado_name">Ácaro rajado</string>
+    <string name="acarorajado_content">É um tipo de ácaro que causa danos nas plantas, formando manchas avermelhadas nas folhas.</string>
+
+    <string name="cochonilha_name">Cochonilhas</string>
+    <string name="cochonilha_content">A cochonilha é um inseto sugador que ataca plantas, formando carapaças brancas ou marrons em seus ramos e folhas.</string>
+
+    <string name="coros_name">Corós</string>
+    <string name="coros_content">Os corós são doenças fúngicas que afetam as plantas, causando manchas necróticas nas folhas e frutos.</string>
+
+    <string name="formiga_cortadeira_name">Formiga cortadeira</string>
+    <string name="formiga_cortadeira_content">As formigas cortadeiras são insetos que cortam e transportam fragmentos de folhas para seus ninhos.</string>
+
+    <string name="helicoverpa_armigera_name">Helicoverpa armigera</string>
+    <string name="helicoverpa_armigera_content">A helicoverpa armigera é uma espécie de lagarta considerada uma praga agrícola.</string>
+
+    <string name="lagarta_cartucho_name">Lagarta-do-cartucho</string>
+    <string name="lagarta_cartucho_content">A lagarta do cartucho é uma praga que ataca espigas de milho.</string>
+
+    <string name="lavaminadora_name">Larva minadora</string>
+    <string name="lavaminadora_content">Larvas minadoras são larvas de insetos que se alimentam do tecido foliar das plantas.</string>
+
+    <string name="mosca_branca_name">Mosca-branca</string>
+    <string name="mosca_branca_content">A mosca-branca é um pequeno inseto sugador que se alimenta da seiva das plantas.</string>
+
+    <string name="percebo_marrom_name">Percevejo-marrom</string>
+    <string name="percebo_marrom_content">O percevejo-marrom é um inseto que se alimenta da seiva das plantas.</string>
+
+    <string name="pulgoes_name">Pulgões</string>
+    <string name="pulgoes_content">Os pulgões são pequenos insetos sugadores que se multiplicam rapidamente.</string>
+
 </resources>

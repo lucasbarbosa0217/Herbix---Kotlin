@@ -13,10 +13,10 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:id="@+id/details"
+        android:id="@+id/descriptionTextView"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="48dp"
         android:autoText="false"
         android:fontFamily="@font/quicksand"
         android:text="Detecte facilmente pragas, pestes e doenças nas suas platações utilizando\n Inteligência Artificial"
@@ -33,7 +33,7 @@
         android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="150dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -66,27 +66,7 @@
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/details" />
-
-
-    <Button
-        android:id="@+id/btn_ia"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:backgroundTint="@android:color/white"
-        android:paddingLeft="55dp"
-        android:paddingTop="10dp"
-        android:paddingRight="55dp"
-        android:paddingBottom="10dp"
-        android:text="CONVERSE COM A IA"
-        android:textColor="@android:color/black"
-        android:textColorHighlight="@android:color/white"
-        android:textColorLink="#FFFFFF"
-        android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/descriptionTextView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

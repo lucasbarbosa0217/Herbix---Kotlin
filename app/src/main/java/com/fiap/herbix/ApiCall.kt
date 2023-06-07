@@ -1,4 +1,8 @@
+import android.content.Context
+import android.content.Intent
 import android.util.Log
+import android.widget.Toast
+import com.fiap.herbix.ResultActivity
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -9,7 +13,7 @@ import kotlin.math.log
 
 class ApiCall {
 
-    fun uploadImage(imageFile: File) {
+    fun uploadImage(context: Context, imageFile: File, callback: (Boolean) -> Unit) {
         val client = OkHttpClient()
 
         getToken { token ->
@@ -40,12 +44,20 @@ class ApiCall {
                     override fun onFailure(call: Call, e: IOException) {
                         // Manipule a falha na solicitação aqui
                         Log.e("API Response", "Request failed: ${e.message}")
+                        Toast.makeText(context, "Erro", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onResponse(call: Call, response: Response) {
                         val responseBody = response.body?.string()
                         // Manipule a resposta da solicitação aqui
                         Log.d("API Response", "Response: $responseBody")
+                        // Cria uma Intent
+
+                        val intent = Intent(context, ResultActivity::class.java)
+                        intent.putExtra("responseBody", responseBody)
+
+                        // Inicia a ResultActivity
+                        context.startActivity(intent)
                     }
                 })
             } else {

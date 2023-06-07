@@ -4,6 +4,7 @@ package com.fiap.herbix
 import ApiCall
 import android.Manifest
 import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -26,6 +27,8 @@ import java.util.Locale
 class MainActivity : AppCompatActivity() {
     private lateinit var apiCall: ApiCall
     private var currentPhotoPath: String? = null
+    private lateinit var progressDialog: ProgressDialog
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -34,38 +37,37 @@ class MainActivity : AppCompatActivity() {
 
         // Inicialize a instância da classe com.fiap.herbix.ApiCall
         apiCall = ApiCall()
-
+        progressDialog = ProgressDialog(this).apply {
+            setMessage("Carregando...")
+            setCancelable(false)
+        }
         // Verifique e solicite as permissões necessárias
         checkPermissions()
 
 
-        val btnProximaPagina = findViewById<Button>(R.id.btn_ia)
+
+
         val button = findViewById<Button>(R.id.button)
 
         // Exemplo de chamada para enviar a imagem quando o botão for clicado
         button.setOnClickListener {
-            Log.d("API Response", "Click Listener On" ?: "")
+
 
             // Verifique se as permissões necessárias foram concedidas
             if (hasPermissions()) {
-                Log.d("API Response", "Click Listener Tem Permissões" ?: "")
+
 
                 // Exiba um diálogo de escolha para o usuário
                 showImageSourceDialog()
             } else {
-                Log.d("API Response", "Click Listener Não Tem Permissões" ?: "")
+
 
                 // Solicite as permissões necessárias
                 requestPermissions()
             }
         }
 
-        btnProximaPagina.setOnClickListener {
 
-            val intent = Intent(this, Gpt::class.java)
-            startActivity(intent)
-
-        }
     }
 
     private fun checkPermissions() {
@@ -131,10 +133,13 @@ class MainActivity : AppCompatActivity() {
     private fun captureImageFromCamera() {
         // Crie um arquivo para salvar a imagem
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+
+
         val imageFile = File.createTempFile(
             "JPEG_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())}_",
             ".jpg",
             storageDir
+
         )
 
         // Salve o caminho da foto na variável currentPhotoPath
@@ -156,6 +161,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun selectImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+
         resultLauncher.launch(intent)
     }
 
@@ -163,17 +169,38 @@ class MainActivity : AppCompatActivity() {
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             val selectedImageUri: Uri? = data?.data
-
+            progressDialog.show()
             if (selectedImageUri == null) {
                 // Se a Uri for nula, provavelmente é uma foto da câmera
                 // Nesse caso, você pode usar a Uri fornecida anteriormente para salvar a imagem em um arquivo
                 val imageFile = File(currentPhotoPath)
-                apiCall.uploadImage(imageFile)
+                progressDialog.show()
+                apiCall.uploadImage(this, imageFile) { success ->
+                    runOnUiThread {
+                        progressDialog.dismiss()
+
+                        if (success) {
+                            // Upload da imagem concluído com sucesso
+                        } else {
+                            // Ocorreu um erro no upload da imagem
+                        }
+                    }
+                }
             } else {
                 // Se a Uri não for nula, é uma imagem da galeria
                 // Você pode continuar com o código existente
                 val imageFile = File(getRealPathFromUri(selectedImageUri))
-                apiCall.uploadImage(imageFile)
+                apiCall.uploadImage(this, imageFile) { success ->
+                    runOnUiThread {
+                        progressDialog.dismiss()
+
+                        if (success) {
+                            // Upload da imagem concluído com sucesso
+                        } else {
+                            // Ocorreu um erro no upload da imagem
+                        }
+                    }
+                }
             }
         }
     }
@@ -191,6 +218,11 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         private const val PERMISSIONS_REQUEST_CODE = 123
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        progressDialog.dismiss();
     }
 }
 
