@@ -14,7 +14,7 @@ class ResultActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_result)
         val responseBody = intent.getStringExtra("responseBody")
-        Log.w("Response API", "onCreate: "+responseBody, )
+        Log.w("Response API", "onCreate: $responseBody", )
 
         val jsonObject = JSONObject(responseBody)
         val nomeCortada = jsonObject.getString("labelName")
@@ -26,7 +26,7 @@ class ResultActivity : AppCompatActivity() {
 
         // Identificar o recurso string com base no nome da doença
         when (nomeCortada) {
-            "Ácaro rajado" -> {
+            "Ácaro Rajado" -> {
                 titleResId = R.string.acarorajado_name
                 descriptionResId = R.string.acarorajado_content
             }
@@ -75,8 +75,8 @@ class ResultActivity : AppCompatActivity() {
             titleTextView.setText(titleResId)
             descriptionTextView.setText(descriptionResId)
         } else{
-            Toast.makeText(this, "Erro", Toast.LENGTH_SHORT).show()
-            finish()
+            titleTextView.setText("Resposta não cadastrada")
+            descriptionTextView.setText("descriptionResId")
         }
 
 

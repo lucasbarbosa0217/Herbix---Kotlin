@@ -1,6 +1,5 @@
 package com.fiap.herbix
 
-
 import ApiCall
 import android.Manifest
 import android.app.Activity
@@ -8,11 +7,12 @@ import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -29,95 +29,73 @@ class MainActivity : AppCompatActivity() {
     private var currentPhotoPath: String? = null
     private lateinit var progressDialog: ProgressDialog
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Inicialize a instância da classe com.fiap.herbix.ApiCall
         apiCall = ApiCall()
         progressDialog = ProgressDialog(this).apply {
             setMessage("Carregando...")
             setCancelable(false)
         }
-        // Verifique e solicite as permissões necessárias
+
         checkPermissions()
 
-
-
-
         val button = findViewById<Button>(R.id.button)
-
-        // Exemplo de chamada para enviar a imagem quando o botão for clicado
         button.setOnClickListener {
-
-
-            // Verifique se as permissões necessárias foram concedidas
             if (hasPermissions()) {
-
-
-                // Exiba um diálogo de escolha para o usuário
                 showImageSourceDialog()
             } else {
-
-
-                // Solicite as permissões necessárias
                 requestPermissions()
             }
         }
-
-
     }
 
     private fun checkPermissions() {
-        val permissions = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
+        val permissions = mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+
         if (!hasPermissions()) {
-            ActivityCompat.requestPermissions(this, permissions, PERMISSIONS_REQUEST_CODE)
+            ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSIONS_REQUEST_CODE)
         }
     }
 
     private fun hasPermissions(): Boolean {
-        val readPermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        )
-        val writePermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        val cameraPermission = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.CAMERA
-        )
+        val cameraPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        val readPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+        val writePermission = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        } else {
+            PackageManager.PERMISSION_GRANTED
+        }
 
-        return readPermission == PackageManager.PERMISSION_GRANTED &&
-                writePermission == PackageManager.PERMISSION_GRANTED &&
-                cameraPermission == PackageManager.PERMISSION_GRANTED
+        return cameraPermission == PackageManager.PERMISSION_GRANTED &&
+                readPermission == PackageManager.PERMISSION_GRANTED &&
+                writePermission == PackageManager.PERMISSION_GRANTED
     }
 
     private fun requestPermissions() {
-        val permissions = arrayOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.CAMERA
+        val permissions = mutableListOf(
+            Manifest.permission.CAMERA,
+            Manifest.permission.READ_EXTERNAL_STORAGE
         )
 
-        permissions.forEach { permission ->
-            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(permission), PERMISSIONS_REQUEST_CODE)
-            }
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            permissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
+
+        ActivityCompat.requestPermissions(this, permissions.toTypedArray(), PERMISSIONS_REQUEST_CODE)
     }
 
     private fun showImageSourceDialog() {
         val options = arrayOf("Câmera", "Galeria")
-        val dialog = AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle("Escolha a origem da imagem")
             .setItems(options) { _, which ->
                 when (which) {
@@ -126,26 +104,18 @@ class MainActivity : AppCompatActivity() {
                 }
             }
             .setNegativeButton("Cancelar", null)
-            .create()
-        dialog.show()
+            .show()
     }
 
     private fun captureImageFromCamera() {
-        // Crie um arquivo para salvar a imagem
         val storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-
-
         val imageFile = File.createTempFile(
             "JPEG_${SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())}_",
             ".jpg",
             storageDir
-
         )
 
-        // Salve o caminho da foto na variável currentPhotoPath
         currentPhotoPath = imageFile.absolutePath
-
-        // Crie o intent da câmera
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
         val photoUri: Uri = FileProvider.getUriForFile(
             this,
@@ -154,14 +124,11 @@ class MainActivity : AppCompatActivity() {
         )
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
 
-        // Inicie a atividade da câmera
         resultLauncher.launch(intent)
     }
 
-
     private fun selectImageFromGallery() {
         val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-
         resultLauncher.launch(intent)
     }
 
@@ -170,41 +137,34 @@ class MainActivity : AppCompatActivity() {
             val data: Intent? = result.data
             val selectedImageUri: Uri? = data?.data
             progressDialog.show()
+
             if (selectedImageUri == null) {
-                // Se a Uri for nula, provavelmente é uma foto da câmera
-                // Nesse caso, você pode usar a Uri fornecida anteriormente para salvar a imagem em um arquivo
                 val imageFile = File(currentPhotoPath)
-                progressDialog.show()
                 apiCall.uploadImage(this, imageFile) { success ->
                     runOnUiThread {
                         progressDialog.dismiss()
-
                         if (success) {
-                            // Upload da imagem concluído com sucesso
+                            Toast.makeText(this, "Imagem enviada com sucesso!", Toast.LENGTH_SHORT).show()
                         } else {
-                            // Ocorreu um erro no upload da imagem
+                            Toast.makeText(this, "Falha ao enviar imagem.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             } else {
-                // Se a Uri não for nula, é uma imagem da galeria
-                // Você pode continuar com o código existente
                 val imageFile = File(getRealPathFromUri(selectedImageUri))
                 apiCall.uploadImage(this, imageFile) { success ->
                     runOnUiThread {
                         progressDialog.dismiss()
-
                         if (success) {
-                            // Upload da imagem concluído com sucesso
+                            Toast.makeText(this, "Imagem enviada com sucesso!", Toast.LENGTH_SHORT).show()
                         } else {
-                            // Ocorreu um erro no upload da imagem
+                            Toast.makeText(this, "Falha ao enviar imagem.", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
         }
     }
-
 
     private fun getRealPathFromUri(uri: Uri): String? {
         val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
@@ -222,10 +182,37 @@ class MainActivity : AppCompatActivity() {
 
     override fun onRestart() {
         super.onRestart()
-        progressDialog.dismiss();
+        progressDialog.dismiss()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        if (requestCode == PERMISSIONS_REQUEST_CODE) {
+            if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                showImageSourceDialog()
+            } else {
+                Toast.makeText(this, "O aplicativo não funcionará corretamente sem as permissões necessárias.", Toast.LENGTH_LONG).show()
+
+                if (permissions.any { ActivityCompat.shouldShowRequestPermissionRationale(this, it) }) {
+                    Toast.makeText(this, "Permissões necessárias para acessar a câmera e galeria", Toast.LENGTH_SHORT).show()
+                } else {
+                    AlertDialog.Builder(this)
+                        .setMessage("As permissões são necessárias para o funcionamento do aplicativo. Vá até as configurações para concedê-las manualmente.")
+                        .setPositiveButton("Configurações") { _, _ ->
+                            val intent = Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                                data = Uri.fromParts("package", packageName, null)
+                            }
+                            startActivity(intent)
+                        }
+                        .setNegativeButton("Cancelar", null)
+                        .show()
+                }
+            }
+        }
     }
 }
-
-
-
-

@@ -27,49 +27,37 @@ class ApiCall {
                     )
                     .build()
                 Log.w("Response API", token )
-
-
                     val jsonObject = JSONObject(token)
                      val tokenCortada = jsonObject.getString("access_token")
-
-
-
                 val request = Request.Builder()
-                    .url("https://www.nyckel.com/v1/functions/j4rq6vb5veq00lq6/invoke")
+                    .url("https://www.nyckel.com/v1/functions/jdgtvk0ocaez81ji/invoke")
                     .post(requestBody)
                     .addHeader("Authorization", "Bearer "+tokenCortada)
                     .build()
 
                 client.newCall(request).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) {
-                        // Manipule a falha na solicitação aqui
                         Log.e("API Response", "Request failed: ${e.message}")
-                        Toast.makeText(context, "Erro", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Erro 41 ApiCall", Toast.LENGTH_SHORT).show()
                     }
 
                     override fun onResponse(call: Call, response: Response) {
                         val responseBody = response.body?.string()
-                        // Manipule a resposta da solicitação aqui
                         Log.d("API Response", "Response: $responseBody")
-                        // Cria uma Intent
-
                         val intent = Intent(context, ResultActivity::class.java)
                         intent.putExtra("responseBody", responseBody)
-
-                        // Inicia a ResultActivity
                         context.startActivity(intent)
                     }
                 })
             } else {
-                // Lógica para lidar com falha ao obter o token
                 Log.e("API Response", "Failed to get token")
             }
         }
 
     }
     fun getToken(callback: (String?) -> Unit) {
-        val clientId = "a7jbecjr9hpfui0yui1wijijtfv42y1v"
-        val clientSecret = "lgfjb05ju7yvmbtvcxc67alqo0hzheoaftte2gntch2blmxhlzs5mvoauovbj62f"
+        val clientId = "np1rwr5x435v5waphfgq7h4nnpomhmup"
+        val clientSecret = "nfeo8imggs8bv146nepgij95ke363jgh9g7pimhzt09e9trmlhy2wd64684uefdx"
         val grantType = "client_credentials"
 
         val formBody = FormBody.Builder()
